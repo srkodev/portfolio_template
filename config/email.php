@@ -7,6 +7,6 @@ return [
     'encryption' => 'tls',
     'from_email' => 'contact@vosoft.fr',
     'from_name' => 'Contact',
-    'to_email' => 'srko.dj@gmail.com',
+    'to_email' => 'alexandre.genza@gmail.com',
     'to_name' => 'Alexendre Genza',
 ];

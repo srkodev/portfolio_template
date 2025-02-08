@@ -86,40 +86,40 @@ class AdminController
     {
         $this->checkAdmin();
     
-        $id      = $_GET['id'] ?? null;
+        $id = $_GET['id'] ?? null;
         $editing = !empty($id);
         $message = '';
     
         if ($editing) {
             $project = Project::find($id);
-            $gallery = Project::getGallery($id);
+            $gallery = ProjectGallery::allByProject($id);
         } else {
             $project = [
-                'id'           => null,
-                'title'        => '',
-                'subtitle'     => '',
-                'description'  => '',
-                'techno'       => '',
+                'id' => null,
+                'title' => '',
+                'subtitle' => '',
+                'description' => '',
+                'techno' => '',
                 'presentation' => '',
-                'image'        => ''
+                'image' => ''
             ];
             $gallery = [];
         }
     
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title        = $_POST['title'] ?? '';
-            $subtitle     = $_POST['subtitle'] ?? '';
-            $description  = $_POST['description'] ?? '';
-            $techno       = $_POST['techno'] ?? '';
+            $title = $_POST['title'] ?? '';
+            $subtitle = $_POST['subtitle'] ?? '';
+            $description = $_POST['description'] ?? '';
+            $techno = $_POST['techno'] ?? '';
             $presentation = $_POST['presentation'] ?? '';
-            $imagePath    = $project['image'];
+            $imagePath = $project['image'];
     
-            // Gestion de l'upload de l'image principale
+            // Gestion de l'image principale
             if (!empty($_FILES['image']['name'])) {
                 $imagePath = $this->handleFileUpload($_FILES['image']);
             }
     
-            // Mise à jour ou création
+            // Mise à jour ou création du projet
             if ($editing) {
                 Project::update($id, $title, $subtitle, $description, $techno, $presentation, $imagePath);
                 $message = "Projet mis à jour avec succès.";
@@ -128,20 +128,55 @@ class AdminController
                 $message = "Projet créé avec succès.";
             }
     
-            // Gestion des images de la galerie
-            if (isset($_FILES['gallery_images'])) {
+            // Gestion des suppressions d'images
+            if (!empty($_POST['delete_images'])) {
+                $deletedImages = json_decode($_POST['delete_images'], true);
+                if (is_array($deletedImages)) {
+                    foreach ($deletedImages as $imageId) {
+                        $image = ProjectGallery::find($imageId);
+                        if ($image && $image['project_id'] == $id) { // Vérification de sécurité
+                            $filePath = __DIR__ . '/../../public/' . $image['src'];
+                            if (file_exists($filePath)) {
+                                unlink($filePath);
+                            }
+                            ProjectGallery::delete($imageId);
+                        }
+                    }
+                }
+            }
+    
+            // Gestion des nouvelles images
+            if (!empty($_FILES['gallery_images']['name'][0])) {
                 $this->handleGalleryUpload($id, $_FILES['gallery_images']);
             }
     
-            // Recharge des données en cas d'édition
-            if ($editing) {
-                $project = Project::find($id);
-                $gallery = Project::getGallery($id);
-            }
+            // Recharger les données après modification
+            $project = Project::find($id);
+            $gallery = ProjectGallery::allByProject($id);
         }
     
         require __DIR__ . '/../Views/admin/project_form.php';
     }
+    
+    
+    private function syncGallery($projectId, $existingGallery)
+    {
+        // Récupérer toutes les images actuelles pour ce projet
+        $currentGallery = ProjectGallery::allByProject($projectId); // Remplacement de getByProjectId par allByProject
+    
+        // Supprimer les images qui ne sont pas dans la liste des IDs existants
+        foreach ($currentGallery as $image) {
+            if (!in_array($image['id'], $existingGallery)) {
+                $filePath = __DIR__ . '/../../public/' . $image['src'];
+                if (file_exists($filePath)) {
+                    unlink($filePath); // Supprime physiquement l'image
+                }
+                ProjectGallery::delete($image['id']); // Supprime de la base de données
+            }
+        }
+    }
+    
+    
     
 
     public function projectDelete()
@@ -239,14 +274,17 @@ class AdminController
     private function handleFileUpload($file, $allowedMimeType = null)
     {
         $targetDir = 'uploads/';
-        $fileName = basename($file['name']);
+    
+        // Nettoyer le nom du fichier pour éviter les caractères problématiques
+        $fileName = $this->cleanFileName(basename($file['name']));
+    
         $uniqueName = uniqid() . '_' . $fileName;
         $targetFile = $targetDir . $uniqueName;
-
+    
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
-
+    
         if (!$allowedMimeType || $mimeType === $allowedMimeType) {
             if (move_uploaded_file($file['tmp_name'], __DIR__ . '/../../public/' . $targetFile)) {
                 return $targetFile;
@@ -254,22 +292,48 @@ class AdminController
         }
         return null;
     }
-
+    
+    // Ajout de la méthode pour nettoyer les noms de fichiers
+    private function cleanFileName($filename)
+    {
+        // Remplace les caractères non valides par des underscores
+        $filename = preg_replace('/[^A-Za-z0-9\.-]/', '_', $filename);
+        // Remplace les underscores multiples par un seul
+        $filename = preg_replace('/_+/', '_', $filename);
+        // Supprime les underscores en début ou en fin de chaîne
+        $filename = trim($filename, '_');
+        return $filename;
+    }
+    
     private function handleGalleryUpload($projectId, $files)
     {
-        $count = count($files['name']);
-        for ($i = 0; $i < $count; $i++) {
+        $uploadDir = 'uploads/gallery/';
+        $baseDir = __DIR__ . '/../../public/' . $uploadDir;
+    
+        // Créer le répertoire s'il n'existe pas
+        if (!file_exists($baseDir)) {
+            mkdir($baseDir, 0777, true);
+        }
+    
+        $fileCount = count($files['name']);
+        for ($i = 0; $i < $fileCount; $i++) {
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
-                $file = [
-                    'name' => $files['name'][$i],
-                    'tmp_name' => $files['tmp_name'][$i]
-                ];
-                $filePath = $this->handleFileUpload($file);
-                if ($filePath) {
-                    $alt = pathinfo($files['name'][$i], PATHINFO_FILENAME);
+                $tmpName = $files['tmp_name'][$i];
+                $originalName = $files['name'][$i];
+                
+                // Nettoyer le nom du fichier
+                $cleanFileName = $this->cleanFileName($originalName);
+                $uniqueName = uniqid() . '_' . $cleanFileName;
+                $filePath = $uploadDir . $uniqueName;
+                $fullPath = $baseDir . $uniqueName;
+    
+                if (move_uploaded_file($tmpName, $fullPath)) {
+                    // Créer l'entrée dans la base de données
+                    $alt = pathinfo($originalName, PATHINFO_FILENAME);
                     ProjectGallery::create($projectId, $filePath, $alt);
                 }
             }
         }
     }
+    
 }

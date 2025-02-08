@@ -13,7 +13,6 @@ class Content
         $stmt->execute([$key]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['text' => '', 'image' => ''];
     }
-    
 
     public static function updateText($key, $text, $imagePath = null)
     {

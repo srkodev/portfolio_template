@@ -21,50 +21,54 @@ FLUSH PRIVILEGES;
 -- 4) Création des tables
 --
 
--- TABLE 'users' : pour l'admin
-DROP TABLE IF EXISTS users;
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL
+-- Table: competences
+CREATE TABLE competences (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    icon VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
 );
 
--- Insérer un utilisateur admin (username=admin, mdp=admin => haché via password_hash())
-INSERT INTO users (username, password)
-VALUES ('admin', '$2y$10$QCe8qUOAXhVDtj2zsif4xu5unL72y3GbKsJPT9aImn997jEQR9mOS');
-
--- TABLE 'contents' : pour stocker "À propos", "Compétences", etc.
-DROP TABLE IF EXISTS contents;
+-- Table: contents
 CREATE TABLE contents (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  content_key VARCHAR(100) NOT NULL UNIQUE,
-  content_text TEXT
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    content_key VARCHAR(100) NOT NULL UNIQUE,
+    content_text TEXT,
+    content_image VARCHAR(255),
+    PRIMARY KEY (id)
 );
 
--- Exemples de contenus initiaux
-INSERT INTO contents (content_key, content_text)
-VALUES 
-  ('about_me', 'Bonjour, je suis Jules. Étudiant en MMI et passionné de développement web.'),
-  ('competences', 'HTML/CSS, JavaScript, PHP, Tailwind, etc.');
+-- Table: project_galleries
+CREATE TABLE project_galleries (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    project_id INT(11) NOT NULL,
+    src VARCHAR(255) NOT NULL,
+    alt VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
 
--- TABLE 'projects' : pour les projets
-DROP TABLE IF EXISTS projects;
+-- Table: projects
 CREATE TABLE projects (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  detail LONGTEXT,
-  image VARCHAR(255),
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    description TEXT,
+    techno TEXT NOT NULL,
+    presentation TEXT NOT NULL,
+    image VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
 );
 
--- Exemples de projets
-INSERT INTO projects (title, description, detail, image)
-VALUES 
-  ('Projet 1', 'Description rapide du projet 1', 'Détails plus complets...', 'uploads/projet1.jpg'),
-  ('Projet 2', 'Description rapide du projet 2', 'Détails plus complets...', 'uploads/projet2.jpg');
-
-
-
-
-
+-- Table: users
+CREATE TABLE users (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+                                                                                                                                                                                             

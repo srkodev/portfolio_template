@@ -21,7 +21,7 @@ require __DIR__ . '/../includes/header.php';
                     <input
                         type="text"
                         name="title"
-                        class="w-full border border-gray-300 p-2 rounded"
+                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         value="<?= htmlspecialchars($competence['title'] ?? '') ?>"
                         required
                     />
@@ -31,42 +31,95 @@ require __DIR__ . '/../includes/header.php';
                     <textarea
                         name="description"
                         rows="4"
-                        class="w-full border border-gray-300 p-2 rounded"
+                        class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         required
                     ><?= htmlspecialchars($competence['description'] ?? '') ?></textarea>
                 </div>
                 <div class="mb-4">
-                    <label class="block font-semibold mb-1">Icône (SVG uniquement)</label>
-                    <input
-                        type="file"
-                        name="iconFile"
-                        accept=".svg,image/svg+xml"
-                        class="w-full border border-gray-300 p-2 rounded"
-                        <?= $editing ? '' : 'required' ?>
-                    />
-                    <?php if ($editing && !empty($competence['icon'])): ?>
-                        <p class="text-sm text-gray-600 mt-2">
-                            Icône actuelle :
-                            <a href="<?= htmlspecialchars($competence['icon']) ?>" target="_blank" class="underline">
-                                Voir l'icône
-                            </a>
-                        </p>
-                    <?php endif; ?>
+                    <label class="block font-semibold mb-2">Icône (SVG uniquement)</label>
+                    <!-- Drag and Drop Container -->
+                    <div
+                        id="iconDropzone"
+                        class="w-full border-2 border-dashed border-gray-300 rounded p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                    >
+                        <p class="text-gray-500">Déposez un fichier SVG ici ou cliquez pour sélectionner</p>
+                        <input type="file" name="iconFile" accept=".svg,image/svg+xml" class="hidden" id="iconInput">
+                    </div>
+                    <!-- Aperçu de l'icône actuelle ou sélectionnée -->
+                    <div id="iconPreview" class="mt-4">
+                        <?php if ($editing && !empty($competence['icon'])): ?>
+                            <img src="<?= htmlspecialchars($competence['icon']); ?>" alt="Icône actuelle" class="w-16 h-16 object-contain rounded-lg shadow">
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
             <!-- Boutons -->
-            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                Enregistrer
-            </button>
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Enregistrer</button>
             <a href="index.php?action=admin_competences_list" class="ml-4 text-blue-600 hover:underline">Annuler</a>
-            <a
-                href="index.php?action=home"
-                class="ml-4 text-blue-600 hover:underline"
-            >
-                Site Principal
-            </a>
+            <a href="index.php?action=home" class="ml-4 text-blue-600 hover:underline">Site Principal</a>
         </form>
     </div>
 </section>
+
+<!-- Ajout du JavaScript pour gérer le drag and drop et l'aperçu de l'icône SVG -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const dropzone = document.getElementById('iconDropzone');
+    const fileInput = document.getElementById('iconInput');
+    const previewContainer = document.getElementById('iconPreview');
+
+    // Ouvrir le sélecteur de fichiers lorsqu'on clique sur la dropzone
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    // Gérer le changement de fichier via le sélecteur
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+            previewFile(fileInput.files[0]);
+        }
+    });
+
+    // Gérer le survol de la dropzone
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-indigo-600', 'bg-gray-100');
+    });
+
+    // Gérer le retrait du survol
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-indigo-600', 'bg-gray-100');
+    });
+
+    // Gérer le dépôt de fichiers
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-indigo-600', 'bg-gray-100');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            if (file.type === 'image/svg+xml') {
+                fileInput.files = e.dataTransfer.files;
+                previewFile(file);
+            } else {
+                alert('Veuillez déposer un fichier SVG uniquement.');
+            }
+        }
+    });
+
+    // Fonction pour afficher l'aperçu de l'icône SVG
+    function previewFile(file) {
+        if (file.type !== 'image/svg+xml') {
+            alert('Veuillez sélectionner un fichier SVG.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewContainer.innerHTML = `
+                <img src="${e.target.result}" alt="Icône sélectionnée" class="w-16 h-16 object-contain rounded-lg shadow">
+            `;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
 <?php require __DIR__ . '/../includes/footer.php'; ?>
