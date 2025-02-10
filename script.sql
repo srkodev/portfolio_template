@@ -41,7 +41,7 @@ CREATE TABLE contents (
 );
 
 -- Table: project_galleries
-CREATE TABLE project_galleries (
+CREATE TABLE project_gallery (
     id INT(11) NOT NULL AUTO_INCREMENT,
     project_id INT(11) NOT NULL,
     src VARCHAR(255) NOT NULL,
@@ -72,6 +72,3 @@ CREATE TABLE users (
     PRIMARY KEY (id)
 );
 
-
-INSERT INTO users (username, password) VALUES ('jules', '$2y$10$BCp90WqEFyT4P24rBbJqM.VqwpD6CkCOEeRTpYNreh6MTGSysM5VC
-');

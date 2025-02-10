@@ -13,10 +13,8 @@ echo "Mot de passe hashé : " . $hashedPassword;
 <br>
 <br>
 
-$2y$10$l3xx4QSTwbSv5vyTs4LNXerg5T6l/SKDNJ8rxlMJmxnwTr5.PXrTK
 
-INSERT INTO users (username, password) VALUES ('jules', '$2y$10$BCp90WqEFyT4P24rBbJqM.VqwpD6CkCOEeRTpYNreh6MTGSysM5VC
-');
+INSERT INTO users (username, password) VALUES ('jules', '$2y$10$bF6pR1wi17CX/k/wnjUlTO1yN96z91NBrQysiLEEAKPgmVTzR3L9O');
 
 
 
