@@ -84,6 +84,17 @@ require __DIR__ . '/../includes/header.php';
                     rows="3"><?= htmlspecialchars($project['techno'] ?? ''); ?></textarea>
         </div>
 
+        <!-- Champ Lien -->
+        <div class="mb-6">
+          <label for="link" class="block font-semibold mb-1 text-gray-900 dark:text-white">Lien</label>
+          <input type="url" 
+                 id="link" 
+                 name="link" 
+                 class="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white" 
+                 value="<?= htmlspecialchars($project['link'] ?? ''); ?>"
+                 placeholder="https://exemple.com">
+        </div>
+
         <!-- Galerie d'Images -->
         <div class="mb-6">
           <label for="gallery-input" class="block font-semibold mb-1 text-gray-900 dark:text-white">Galerie d'Images</label>

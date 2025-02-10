@@ -60,6 +60,7 @@ CREATE TABLE projects (
     techno TEXT NOT NULL,
     presentation TEXT NOT NULL,
     image VARCHAR(255),
+    link VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
@@ -71,4 +72,3 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
-

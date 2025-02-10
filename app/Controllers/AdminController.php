@@ -119,7 +119,8 @@ class AdminController
                 'description' => '',
                 'techno' => '',
                 'presentation' => '',
-                'image' => ''
+                'image' => '',
+                'link' => '' // Nouveau champ
             ];
             $gallery = [];
         }
@@ -130,6 +131,8 @@ class AdminController
             $description = $_POST['description'] ?? '';
             $techno = $_POST['techno'] ?? '';
             $presentation = $_POST['presentation'] ?? '';
+            $link = $_POST['link'] ?? ''; // Récupération du champ Lien
+
             $imagePath = $project['image'];
 
             // Gestion de l'image principale
@@ -139,10 +142,10 @@ class AdminController
 
             // Mise à jour ou création du projet
             if ($editing) {
-                Project::update($id, $title, $subtitle, $description, $techno, $presentation, $imagePath);
+                Project::update($id, $title, $subtitle, $description, $techno, $presentation, $imagePath, $link);
                 $message = "Projet mis à jour avec succès.";
             } else {
-                $id = Project::create($title, $subtitle, $description, $techno, $presentation, $imagePath);
+                $id = Project::create($title, $subtitle, $description, $techno, $presentation, $imagePath, $link);
                 $message = "Projet créé avec succès.";
             }
 

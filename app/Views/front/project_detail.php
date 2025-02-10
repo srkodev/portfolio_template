@@ -58,6 +58,18 @@ require __DIR__ . '/../includes/header.php';
 
 <!-- SECTION CONTENU DU PROJET (pas de bg explicite) -->
 <section class="container mx-auto px-4 py-8" data-aos="fade-up">
+  <?php if (!empty($project['link'])): ?>
+    <div class="flex justify-start mb-6 ">
+    <a href="<?= htmlspecialchars($project['link']) ?>" target="_blank" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Lien vers le projet">
+      <!-- Icône de lien avec changement de couleur selon le thème -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-black dark:text-white">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+    </a>
+    </div>
+  <?php endif; ?>
+
   <!-- Présentation -->
   <h2 class="text-2xl sm:text-3xl font-extrabold mb-6">
     Présentation du Projet
@@ -73,9 +85,7 @@ require __DIR__ . '/../includes/header.php';
     </h3>
     <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
       <?php foreach ($project['gallery'] as $index => $img): ?>
-        <!-- Ex. on peut entourer d’une div "carte" avec vos classes config -->
-        <div class="rounded-lg shadow-md overflow-hidden cursor-pointer 
-                    transform hover:scale-105 transition-transform"
+        <div class="rounded-lg shadow-md overflow-hidden cursor-pointer transform hover:scale-105 transition-transform"
              onclick="openModalWithIndex(<?= $index ?>)">
           <img
             src="<?= htmlspecialchars($img['src']) ?>"
@@ -99,9 +109,7 @@ require __DIR__ . '/../includes/header.php';
   <!-- Bouton de retour -->
   <div class="mt-8">
     <a href="index.php?action=home#projects"
-       class="inline-block bg-lightCard dark:bg-darkCard text-black dark:text-white
-              font-semibold px-6 py-3 rounded-full shadow-md
-              hover:shadow-lg transition-transform hover:-translate-y-0.5">
+       class="inline-block bg-lightCard dark:bg-darkCard text-black dark:text-white font-semibold px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5">
       Revenir aux projets
     </a>
   </div>
