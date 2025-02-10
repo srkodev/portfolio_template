@@ -1,12 +1,33 @@
-<footer class="bg-indigo-800 text-white py-8">
-  <div class="max-w-7xl mx-auto px-4 text-center">
+<footer class="text-center py-6 mt-10 bg-[#203a43] text-white">
+  <div class="max-w-7xl mx-auto px-4">
     &copy; <?= date('Y'); ?> - Portfolio Alexandre Genza. Tous droits réservés.
   </div>
 </footer>
-<!-- Ajout du JavaScript pour gérer le menu mobile et le smooth scroll -->
+
+<!-- Scripts -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Fonction pour obtenir les paramètres de requête sous forme d'objet
+    // Gestion de la Sidebar sur mobile
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menu-btn');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    menuBtn.addEventListener('click', () => {
+      if (sidebar.classList.contains('-translate-x-full')) {
+        // Ouvrir
+        sidebar.classList.remove('-translate-x-full');
+        hamburgerIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+      } else {
+        // Fermer
+        sidebar.classList.add('-translate-x-full');
+        hamburgerIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+      }
+    });
+
+    // Smooth scroll sur la page d'accueil
     function getQueryParams(url = window.location.href) {
       const params = {};
       try {
@@ -15,31 +36,28 @@
           params[key] = value;
         });
       } catch (error) {
-        // En cas d'URL relative ou invalide
         const queryString = url.split('?')[1] || '';
         const pairs = queryString.split('&');
         pairs.forEach(pair => {
-          const [key, value] = pair.split('=');
-          if (key) {
-            params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+          const [k, v] = pair.split('=');
+          if (k) {
+            params[decodeURIComponent(k)] = decodeURIComponent(v || '');
           }
         });
       }
       return params;
     }
 
-    // Récupère les paramètres de requête de la page actuelle
     const currentParams = getQueryParams();
-    const isHomePage = currentParams['action'] === 'home';
+    const isHomePage = (currentParams['action'] === 'home' || !currentParams['action']);
 
-    // Sélectionne tous les liens contenant 'action=home#'
     document.querySelectorAll('a[href*="action=home#"]').forEach((link) => {
       link.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
         const url = new URL(href, window.location.origin);
         const linkAction = url.searchParams.get('action');
         const hash = url.hash;
-
+        
         if (isHomePage && linkAction === 'home' && hash) {
           e.preventDefault();
           const targetElement = document.querySelector(hash);
@@ -49,64 +67,19 @@
               block: 'start'
             });
           }
-
-          // Fermer le menu mobile après sélection
-          const mobileMenu = document.getElementById('mobile-menu');
-          const hamburgerIcon = document.getElementById('hamburger-icon');
-          const closeIcon = document.getElementById('close-icon');
-
-          if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.add('hidden');
-            if (hamburgerIcon && closeIcon) {
-              hamburgerIcon.classList.remove('hidden');
-              closeIcon.classList.add('hidden');
-            }
+          // Fermer la sidebar si ouverte
+          if (!sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.add('-translate-x-full');
+            hamburgerIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
           }
-
-          // Mettre à jour l'URL hash sans défiler
+          // Mettre à jour l’URL (ancre)
           history.pushState(null, null, hash);
         }
-        // Sinon, laisser le comportement par défaut (navigation normale)
       });
-    });
-
-    // Gestion du bouton menu mobile
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-    const closeIcon = document.getElementById('close-icon');
-
-    if (mobileMenuButton) {
-      mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-        // Basculer les icônes
-        hamburgerIcon.classList.toggle('hidden');
-        closeIcon.classList.toggle('hidden');
-      });
-    }
-
-    // Fermer le menu mobile lorsqu'on clique sur un lien du menu
-    const mobileLinks = mobileMenu.querySelectorAll('a[href*="action=home#"]');
-    mobileLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        if (!mobileMenu.classList.contains('hidden')) {
-          mobileMenu.classList.add('hidden');
-          hamburgerIcon.classList.remove('hidden');
-          closeIcon.classList.add('hidden');
-        }
-      });
-    });
-
-    // Changer le background du header au scroll
-    window.addEventListener('scroll', () => {
-      const header = document.getElementById('header');
-      if (window.scrollY > 50) {
-        header.classList.remove('bg-transparent');
-        header.classList.add('bg-indigo-800', 'bg-opacity-90', 'shadow-lg');
-      } else {
-        header.classList.add('bg-transparent');
-        header.classList.remove('bg-indigo-800', 'bg-opacity-90', 'shadow-lg');
-      }
     });
   });
 </script>
+
+</body>
+</html>
