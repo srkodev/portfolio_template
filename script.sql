@@ -14,7 +14,7 @@ USE portfolio_jules;
 --
 -- 3) Accorder à l'utilisateur l'accès complet sur cette base
 --
-GRANT ALL PRIVILEGES ON portfolio_db.* TO 'portfolio_user'@'localhost';
+GRANT ALL PRIVILEGES ON portfolio_jules.* TO 'portfolio_jules'@'localhost';
 FLUSH PRIVILEGES;
 
 --

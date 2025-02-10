@@ -14,7 +14,7 @@ class DB
             $host = 'localhost';
             $db   = 'portfolio_jules';
             $user = 'portfolio_jules';
-            $pass = 'portfolio_julesr';
+            $pass = 'portfolio_jules';
 
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
