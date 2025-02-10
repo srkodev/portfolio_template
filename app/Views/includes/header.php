@@ -1,98 +1,99 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><?= $title ?? 'Portfolio - Accueil'; ?></title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Cloudflare Turnstile -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio - Jules Crevoisier, Développeur Web</title>
   <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
+ <!-- Captcha cloudflare -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- AOS CSS (pour les animations) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <!-- Configuration personnalisée de Tailwind avec darkMode activé -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Archivo', 'sans-serif'] },
+          colors: {
+            accent: '#ffa51f',
+            lightCard: 'rgba(255, 255, 255, 0.9)',
+            darkCard: 'rgba(31, 41, 55, 0.9)'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Styles personnalisés -->
   <style>
+    /* Activation du défilement fluide pour toute la page */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Corps de page : clair par défaut, sombre en .dark */
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Archivo', sans-serif;
+      overflow-x: hidden;
     }
-    .fade-in {
-      animation: fadeIn 0.8s ease-in forwards;
-      opacity: 0;
+
+    /* Liens de navigation */
+    .header-nav-item {
+      color: rgba(0, 0, 0, 0.7);
+      transition: color 0.4s ease;
     }
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    .header-nav-item:hover {
+      color: rgba(0, 0, 0, 0.9);
+    }
+    .dark .header-nav-item {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .dark .header-nav-item:hover {
+      color: rgba(255, 255, 255, 0.9);
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 overflow-x-hidden">
+<body class="bg-white text-black dark:bg-gray-900 dark:text-white relative">
+  <!-- Fond dynamique via tsParticles -->
+  <div id="tsparticles" class="absolute top-0 left-0 w-full h-full -z-10"></div>
 
-<!-- ASIDE: Navigation latérale -->
-<aside
-  id="sidebar"
-  class="fixed top-0 left-0 h-full w-64 bg-[#0f2027] transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-40 shadow-xl"
->
-  <div class="flex flex-col h-full">
-    <!-- Logo & Titre -->
-    <div class="p-6 border-b border-white/20">
-      <h1 class="text-2xl font-extrabold text-white">
-        Alexandre<span class="text-[#00ffd9]">G</span>
-      </h1>
-      <p class="text-sm text-white/70">Développeur Web</p>
+  <!-- HEADER -->
+  <header class="container mx-auto px-4 py-6">
+    <div class="flex items-center">
+      <!-- Logo / Nom, à gauche -->
+      <div class="flex items-center space-x-2">
+        <span class="text-3xl font-bold">Jules Crevoisier</span>
+        <span class="text-xl opacity-70">, Développeur Web</span>
+      </div>
+      
+      <!-- Navigation + Switch, à droite -->
+      <div class="ml-auto flex items-center space-x-36">
+        <nav class="hidden md:flex space-x-8">
+          <a href="index.php?action=home#present" class="header-nav-item">Accueil</a>
+          <a href="index.php?action=home#projects" class="header-nav-item">Projets</a>
+          <a href="index.php?action=home#skills" class="header-nav-item">Compétences</a>
+          <a href="index.php?action=home#contact" class="header-nav-item">Contact</a>
+        </nav>
+        <!-- Bouton switch Light/Dark rond -->
+        <button id="theme-toggle"
+                class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 
+                       bg-gray-100 text-gray-700 hover:bg-gray-200 
+                       dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 
+                       transition focus:outline-none">
+          <!-- Icône Lune (pour passer en dark) -->
+          <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 116.707 2.707 8.001 8.001 0 0017.293 13.293z"></path>
+          </svg>
+          <!-- Icône Soleil (pour repasser en clair) -->
+          <svg id="theme-toggle-light-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 15a5 5 0 100-10 5 5 0 000 10z"></path>
+            <path d="M10 1v2M10 17v2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M1 10h2M17 10h2M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"></path>
+          </svg>
+        </button>
+      </div>
     </div>
-
-    <!-- Menu principal -->
-    <nav class="flex-1 px-6 py-4 space-y-3">
-      <a
-        href="index.php?action=home#accueil"
-        class="block text-white font-semibold px-4 py-2 rounded hover:bg-[#203a43] transition"
-      >
-        Accueil
-      </a>
-      <a
-        href="index.php?action=home#apropos"
-        class="block text-white font-semibold px-4 py-2 rounded hover:bg-[#203a43] transition"
-      >
-        À propos
-      </a>
-      <a
-        href="index.php?action=home#projets"
-        class="block text-white font-semibold px-4 py-2 rounded hover:bg-[#203a43] transition"
-      >
-        Projets
-      </a>
-      <a
-        href="index.php?action=home#competences"
-        class="block text-white font-semibold px-4 py-2 rounded hover:bg-[#203a43] transition"
-      >
-        Compétences
-      </a>
-      <a
-        href="index.php?action=home#contact"
-        class="block text-white font-semibold px-4 py-2 rounded hover:bg-[#203a43] transition"
-      >
-        Contact
-      </a>
-    </nav>
-  </div>
-</aside>
-
-<!-- BOUTON POUR OUVRIR / FERMER LA SIDEBAR (visible sur mobile) -->
-<button
-  id="menu-btn"
-  class="fixed top-4 left-4 md:hidden bg-[#00ffd9] text-gray-900 p-2 rounded shadow-lg z-50 focus:outline-none"
->
-  <!-- Icône Hamburger -->
-  <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16"/>
-  </svg>
-  <!-- Icône Croix -->
-  <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M6 18L18 6M6 6l12 12"/>
-  </svg>
-</button>
+  </header>

@@ -101,7 +101,7 @@ class FrontController
 
     private function verifyCaptcha($captchaResponse)
     {
-        $secretKey = '0x4AAAAAAA589kUHPq6k2mXb3yqpN4fnS38'; // Remplacez par votre clé secrète
+        $secretKey = '0x4AAAAAAA8N83denFCtj5_kViMnzAro0oI'; // Remplacez par votre clé secrète
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://challenges.cloudflare.com/turnstile/v0/siteverify");
         curl_setopt($ch, CURLOPT_POST, true);

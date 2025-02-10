@@ -1,85 +1,79 @@
-<footer class="text-center py-6 mt-10 bg-[#203a43] text-white">
-  <div class="max-w-7xl mx-auto px-4">
-    &copy; <?= date('Y'); ?> - Portfolio Alexandre Genza. Tous droits réservés.
-  </div>
-</footer>
+  <!-- FOOTER -->
+  <footer class="container mx-auto px-4 py-8 text-center text-gray-600 dark:text-gray-400">
+    &copy; 2025 Jules Crevoisier. Tous droits réservés.
+  </footer>
 
-<!-- Scripts -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Gestion de la Sidebar sur mobile
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('menu-btn');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-    const closeIcon = document.getElementById('close-icon');
-
-    menuBtn.addEventListener('click', () => {
-      if (sidebar.classList.contains('-translate-x-full')) {
-        // Ouvrir
-        sidebar.classList.remove('-translate-x-full');
-        hamburgerIcon.classList.add('hidden');
-        closeIcon.classList.remove('hidden');
-      } else {
-        // Fermer
-        sidebar.classList.add('-translate-x-full');
-        hamburgerIcon.classList.remove('hidden');
-        closeIcon.classList.add('hidden');
-      }
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out'
     });
+  </script>
 
-    // Smooth scroll sur la page d'accueil
-    function getQueryParams(url = window.location.href) {
-      const params = {};
-      try {
-        const urlObj = new URL(url, window.location.origin);
-        urlObj.searchParams.forEach((value, key) => {
-          params[key] = value;
-        });
-      } catch (error) {
-        const queryString = url.split('?')[1] || '';
-        const pairs = queryString.split('&');
-        pairs.forEach(pair => {
-          const [k, v] = pair.split('=');
-          if (k) {
-            params[decodeURIComponent(k)] = decodeURIComponent(v || '');
-          }
-        });
-      }
-      return params;
+  <!-- tsParticles (fond transparent pour voir le switch de couleur) -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <script>
+    tsParticles.load("tsparticles", {
+      background: { color: { value: "transparent" } },
+      particles: {
+        number: { value: 120, density: { enable: true, value_area: 800 } },
+        color: { value: "#666666" },
+        shape: { type: "circle" },
+        opacity: { value: 0.8, random: true },
+        size: { value: 2, random: true },
+        move: { enable: true, speed: 0.3, direction: "none", out_mode: "out" },
+        line_linked: { enable: false }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          repulse: { distance: 150, duration: 0.4 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+
+  <!-- Script du switch Light/Dark -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+    // Vérification du mode actuel via localStorage ou media-query
+    if (localStorage.getItem('theme') === 'dark'
+      || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      darkIcon.classList.remove('hidden');  // Icône lune affichée
+      lightIcon.classList.add('hidden');    // Icône soleil masquée
+    } else {
+      document.documentElement.classList.remove('dark');
+      darkIcon.classList.add('hidden');
+      lightIcon.classList.remove('hidden');
     }
 
-    const currentParams = getQueryParams();
-    const isHomePage = (currentParams['action'] === 'home' || !currentParams['action']);
-
-    document.querySelectorAll('a[href*="action=home#"]').forEach((link) => {
-      link.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        const url = new URL(href, window.location.origin);
-        const linkAction = url.searchParams.get('action');
-        const hash = url.hash;
-        
-        if (isHomePage && linkAction === 'home' && hash) {
-          e.preventDefault();
-          const targetElement = document.querySelector(hash);
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          }
-          // Fermer la sidebar si ouverte
-          if (!sidebar.classList.contains('-translate-x-full')) {
-            sidebar.classList.add('-translate-x-full');
-            hamburgerIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
-          }
-          // Mettre à jour l’URL (ancre)
-          history.pushState(null, null, hash);
-        }
-      });
+    themeToggle.addEventListener('click', () => {
+      // Bascule la classe "dark" sur la racine HTML
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        darkIcon.classList.remove('hidden');
+        lightIcon.classList.add('hidden');
+      }
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>

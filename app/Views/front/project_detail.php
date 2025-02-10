@@ -1,14 +1,12 @@
 <?php
-$title = "Projet_détail";
+$title = "Projet - Détail";
 require __DIR__ . '/../includes/header.php';
 ?>
 
 <?php if (!empty($project['gallery'])): ?>
-  <!-- Modal -->
-  <div
-    id="myModal"
-    class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-80 z-50"
-  >
+  <!-- MODAL (Lightbox) : on peut éventuellement mettre un fond semi-transparent -->
+  <div id="myModal"
+       class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-80 z-50">
     <div class="relative max-w-3xl w-full mx-4">
       <!-- Bouton de fermeture -->
       <button
@@ -34,11 +32,11 @@ require __DIR__ . '/../includes/header.php';
       >
         &#10095;
       </button>
-      <!-- Image Agrandie -->
+      <!-- Image agrandie -->
       <img
         id="imgModal"
         class="w-full h-auto max-h-[80vh] rounded-lg shadow-xl object-contain"
-        alt="Image Agrandie"
+        alt="Image agrandie"
       />
       <!-- Légende -->
       <p id="caption" class="mt-4 text-center text-white text-lg"></p>
@@ -46,86 +44,85 @@ require __DIR__ . '/../includes/header.php';
   </div>
 <?php endif; ?>
 
-<!-- WRAPPER principal (pour décaler à droite la page) -->
-<div class="ml-0 md:ml-64 transition-all duration-300">
+<!-- SECTION HERO DU PROJET (aucun bg forcé) -->
+<section class="container mx-auto px-4 py-16" data-aos="fade-up">
+  <div class="text-center">
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">
+      <?= htmlspecialchars($project['title'] ?? 'Détail du Projet') ?>
+    </h1>
+    <p class="text-xl sm:text-2xl opacity-90">
+      <?= htmlspecialchars($project['subtitle'] ?? 'Une brève phrase qui résume ce projet') ?>
+    </p>
+  </div>
+</section>
 
-  <!-- HERO DU PROJET -->
-  <section class="relative flex items-center justify-center min-h-[40vh] bg-gradient-to-br from-[#2c5364] via-[#203a43] to-[#0f2027]">
-    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-    <div class="relative z-10 text-center text-white px-4 py-16 fade-in max-w-3xl mx-auto">
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">
-        <?= htmlspecialchars($project['title'] ?? 'Détail du Projet') ?>
-      </h1>
-      <p class="text-xl sm:text-2xl opacity-90">
-        <?= $project['subtitle'] ?? 'Une brève phrase qui résume ce projet' ?>
-      </p>
-    </div>
-  </section>
+<!-- SECTION CONTENU DU PROJET (pas de bg explicite) -->
+<section class="container mx-auto px-4 py-8" data-aos="fade-up">
+  <!-- Présentation -->
+  <h2 class="text-2xl sm:text-3xl font-extrabold mb-6">
+    Présentation du Projet
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8">
+    <?= nl2br(htmlspecialchars($project['presentation'] ?? 'Description non disponible.')) ?>
+  </p>
 
-  <!-- SECTION DESCRIPTION PROJET -->
-  <section class="bg-white py-16 px-4 fade-in">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-6">
-        Présentation du Projet
-      </h2>
-      <p class="text-gray-700 text-base sm:text-lg leading-relaxed mb-8">
-        <?= nl2br(htmlspecialchars($project['presentation'] ?? 'Description non disponible.')); ?>
-      </p>
-
-      <!-- Galerie d'Images -->
-      <?php if (!empty($project['gallery'])): ?>
-        <h3 class="text-xl font-bold text-gray-900 mb-4">
-          Galerie d'Images
-        </h3>
-        <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          <?php foreach ($project['gallery'] as $index => $img): ?>
-            <div class="relative">
-              <img
-                src="<?= htmlspecialchars($img['src']) ?>"
-                alt="<?= htmlspecialchars($img['alt']) ?>"
-                class="w-full h-48 object-cover rounded-lg shadow-md cursor-pointer hover:scale-105 transition-transform"
-                onclick="openModalWithIndex(<?= $index ?>)"
-                data-index="<?= $index ?>"
-              />
-            </div>
-          <?php endforeach; ?>
+  <!-- Galerie d'Images -->
+  <?php if (!empty($project['gallery'])): ?>
+    <h3 class="text-xl font-bold mb-4">
+      Galerie d'Images
+    </h3>
+    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+      <?php foreach ($project['gallery'] as $index => $img): ?>
+        <!-- Ex. on peut entourer d’une div "carte" avec vos classes config -->
+        <div class="rounded-lg shadow-md overflow-hidden cursor-pointer 
+                    transform hover:scale-105 transition-transform"
+             onclick="openModalWithIndex(<?= $index ?>)">
+          <img
+            src="<?= htmlspecialchars($img['src']) ?>"
+            alt="<?= htmlspecialchars($img['alt']) ?>"
+            class="w-full h-48 object-cover"
+            data-index="<?= $index ?>"
+          />
         </div>
-      <?php endif; ?>
-
-      <h3 class="text-xl font-bold text-gray-900 mt-10 mb-4">
-        Technologies & Méthodologie
-      </h3>
-      <p class="text-gray-700 text-base sm:text-lg leading-relaxed">
-        <?= nl2br(htmlspecialchars($project['techno'] ?? 'Liste des technos, frameworks...')) ?>
-      </p>
-
-      <!-- Bouton de retour -->
-      <div class="mt-8">
-        <a
-          href="index.php?action=home#projets"
-          class="inline-block bg-gray-900 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-800 transition-transform hover:-translate-y-0.5"
-        >
-          Revenir aux projets
-        </a>
-      </div>
+      <?php endforeach; ?>
     </div>
-  </section>
-</div>
+  <?php endif; ?>
 
-<!-- Script Modal -->
+  <!-- Technologies & Méthodologie -->
+  <h3 class="text-xl font-bold mt-10 mb-4">
+    Technologies & Méthodologie
+  </h3>
+  <p class="text-base sm:text-lg leading-relaxed">
+    <?= nl2br(htmlspecialchars($project['techno'] ?? 'Liste des technos, frameworks...')) ?>
+  </p>
+
+  <!-- Bouton de retour -->
+  <div class="mt-8">
+    <a href="index.php?action=home#projects"
+       class="inline-block bg-lightCard dark:bg-darkCard text-black dark:text-white
+              font-semibold px-6 py-3 rounded-full shadow-md
+              hover:shadow-lg transition-transform hover:-translate-y-0.5">
+      Revenir aux projets
+    </a>
+  </div>
+</section>
+
+<!-- SCRIPT DU MODAL (Lightbox) -->
 <script>
   let currentImageIndex = 0;
   let galleryImages = [];
 
   <?php if (!empty($project['gallery'])): ?>
+    // Conversion de la galerie PHP en tableau JS
     galleryImages = <?= json_encode(array_map(function($img) {
       return [
-        'src' => $img['src'], 
+        'src' => $img['src'],
         'alt' => htmlspecialchars($img['alt'])
       ];
     }, $project['gallery'])) ?>;
   <?php endif; ?>
 
+  // Ouvrir le modal
   function openModalWithIndex(index) {
     currentImageIndex = index;
     const modal = document.getElementById("myModal");
@@ -140,12 +137,14 @@ require __DIR__ . '/../includes/header.php';
     modal.classList.add("flex");
   }
 
+  // Fermer le modal
   function closeModal() {
     const modal = document.getElementById("myModal");
     modal.classList.add("hidden");
     modal.classList.remove("flex");
   }
 
+  // Image précédente
   function prevImage() {
     currentImageIndex = (currentImageIndex > 0)
       ? currentImageIndex - 1
@@ -153,6 +152,7 @@ require __DIR__ . '/../includes/header.php';
     updateModalImage();
   }
 
+  // Image suivante
   function nextImage() {
     currentImageIndex = (currentImageIndex < galleryImages.length - 1)
       ? currentImageIndex + 1
@@ -160,6 +160,7 @@ require __DIR__ . '/../includes/header.php';
     updateModalImage();
   }
 
+  // Met à jour l'image du modal
   function updateModalImage() {
     const modalImg = document.getElementById("imgModal");
     const captionText = document.getElementById("caption");
@@ -168,6 +169,7 @@ require __DIR__ . '/../includes/header.php';
     captionText.textContent = galleryImages[currentImageIndex].alt;
   }
 
+  // Fermer le modal en cliquant à l'extérieur
   window.onclick = function(event) {
     const modal = document.getElementById("myModal");
     if (event.target === modal) {
@@ -175,6 +177,7 @@ require __DIR__ . '/../includes/header.php';
     }
   }
 
+  // Navigation avec le clavier
   document.addEventListener('keydown', function(event) {
     const modal = document.getElementById("myModal");
     if (!modal.classList.contains("hidden")) {
