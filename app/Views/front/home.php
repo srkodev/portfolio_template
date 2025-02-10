@@ -243,7 +243,7 @@ require __DIR__ . '/../includes/header.php';
     </div>
     
     <!-- Liens de contact avec fond décoratif -->
-    <div class="w-full md:w-1/2 relative flex flex-col items-center justify-center bg-contain bg-center rounded-lg overflow-hidden" style="background-image: url('/portfolio_template/public/uploads/site/ppn.png'); min-height: 450px; background-repeat: no-repeat;">
+    <div class="w-full md:w-1/2 relative flex flex-col items-center justify-center bg-contain bg-center rounded-lg overflow-hidden" style="background-image: url('uploads/site/ppn.png'); min-height: 450px; background-repeat: no-repeat;">
       <div class="relative z-10 p-4">
         <p class="mb-4 text-lg font-semibold text-white">Vous pouvez aussi me retrouver ici</p>
         <div class="flex items-center space-x-4">
