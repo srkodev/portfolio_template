@@ -12,9 +12,9 @@ class DB
     {
         if (self::$pdo === null) {
             $host = 'localhost';
-            $db   = 'portfolio_db';
-            $user = 'portfolio_user';
-            $pass = 'portfolio_user';
+            $db   = 'portfolio_jules';
+            $user = 'portfolio_jules';
+            $pass = 'portfolio_julesr';
 
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

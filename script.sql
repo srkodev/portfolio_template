@@ -1,15 +1,15 @@
 --
 -- 1) Création de l'utilisateur MySQL dédié
 --
-CREATE USER IF NOT EXISTS 'portfolio_user'@'localhost' IDENTIFIED BY 'portfolio_user';
-GRANT ALL PRIVILEGES ON *.* TO 'portfolio_user'@'localhost';
+CREATE USER IF NOT EXISTS 'portfolio_jules'@'localhost' IDENTIFIED BY 'portfolio_jules';
+GRANT ALL PRIVILEGES ON *.* TO 'portfolio_jules'@'localhost';
 FLUSH PRIVILEGES;
 
 --
 -- 2) Création de la base de données
 --
-CREATE DATABASE IF NOT EXISTS portfolio_db;
-USE portfolio_db;
+CREATE DATABASE IF NOT EXISTS portfolio_jules;
+USE portfolio_jules;
 
 --
 -- 3) Accorder à l'utilisateur l'accès complet sur cette base
@@ -71,4 +71,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
-                                                                                                                                                                                             
+
+
+INSERT INTO users (username, password) VALUES ('jules', '$2y$10$BCp90WqEFyT4P24rBbJqM.VqwpD6CkCOEeRTpYNreh6MTGSysM5VC
+');
