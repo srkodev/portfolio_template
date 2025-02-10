@@ -83,16 +83,16 @@ require __DIR__ . '/../includes/header.php';
 
   <!-- Image du hero -->
   <div class="md:w-1/2 flex justify-center" data-aos="fade-left">
-    <div class="relative">
+    <div class="relative mx-auto">
       <img src="<?= !empty($aboutMe['image']) 
           ? htmlspecialchars($aboutMe['image']) 
-          : 'https://via.placeholder.com/300?text=Portrait'; ?>" 
+          : 'https://via.placeholder.com/500?text=Portrait'; ?>" 
            alt="Portrait Jules Crevoisier" 
-           class="w-64 h-64 rounded-full border-4 border-gray-200 dark:border-gray-600" />
+           class="w-[500px] h-[500px] rounded-full border-4 border-gray-200 dark:border-gray-600" />
       <!-- Cercles décoratifs statiques -->
       <div class="absolute inset-0 flex justify-center items-center pointer-events-none">
-        <div class="absolute w-64 h-64 md:w-80 md:h-80 border border-gray-300 dark:border-gray-500 rounded-full"></div>
-        <div class="absolute w-72 h-72 md:w-96 md:h-96 border border-gray-300 dark:border-gray-500 opacity-50 rounded-full"></div>
+        <div class="absolute w-[500px] h-[500px] md:w-80 md:h-80 border border-gray-300 dark:border-gray-500 rounded-full"></div>
+        <div class="absolute w-[550px] h-[550px] md:w-96 md:h-96 border border-gray-300 dark:border-gray-500 opacity-50 rounded-full"></div>
       </div>
     </div>
   </div>
@@ -243,7 +243,7 @@ require __DIR__ . '/../includes/header.php';
     </div>
     
     <!-- Liens de contact avec fond décoratif -->
-    <div class="w-full md:w-1/2 relative flex flex-col items-center justify-center bg-cover bg-center" style="background-image: url('public\uploads\ppn.png'); min-height: 400px;">
+    <div class="w-full md:w-1/2 relative flex flex-col items-center justify-center bg-contain bg-center rounded-lg overflow-hidden" style="background-image: url('/portfolio_template/public/uploads/site/ppn.png'); min-height: 450px; background-repeat: no-repeat;">
       <div class="relative z-10 p-4">
         <p class="mb-4 text-lg font-semibold text-white">Vous pouvez aussi me retrouver ici</p>
         <div class="flex items-center space-x-4">
