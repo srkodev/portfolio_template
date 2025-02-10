@@ -88,7 +88,7 @@ require __DIR__ . '/../includes/header.php';
           ? htmlspecialchars($aboutMe['image']) 
           : 'https://via.placeholder.com/500?text=Portrait'; ?>" 
            alt="Portrait Jules Crevoisier" 
-           class="w-[500px] h-[500px] rounded-full border-4 border-gray-200 dark:border-gray-600" />
+           class="w-[250px] h-[250px] rounded-full border-4 border-gray-200 dark:border-gray-600" />
       <!-- Cercles décoratifs statiques -->
       <div class="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div class="absolute w-[500px] h-[500px] md:w-80 md:h-80 border border-gray-300 dark:border-gray-500 rounded-full"></div>
