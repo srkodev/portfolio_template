@@ -67,7 +67,7 @@
       <!-- Logo / Nom, à gauche -->
       <div class="flex items-center space-x-2">
         <span class="text-3xl font-bold">Jules Crevoisier</span>
-        <span class="text-xl opacity-70">, Développeur Web</span>
+        <span class="text-xl opacity-70">, Développeur Web Junior</span>
       </div>
       
       <!-- Navigation + Switch, à droite -->
