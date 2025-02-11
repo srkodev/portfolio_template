@@ -18,26 +18,26 @@ class Competence
         return $stmt->fetch();
     }
 
-    public static function create($title, $description, $icon)
+    public static function create($title, $description, $icon, $category)
     {
         $pdo = DB::getPDO();
         $stmt = $pdo->prepare("
-            INSERT INTO competences (title, description, icon) 
-            VALUES (?, ?, ?)
+            INSERT INTO competences (title, description, icon, category) 
+            VALUES (?, ?, ?, ?)
         ");
-        $stmt->execute([$title, $description, $icon]);
+        $stmt->execute([$title, $description, $icon, $category]);
         return $pdo->lastInsertId();
     }
 
-    public static function update($id, $title, $description, $icon)
+    public static function update($id, $title, $description, $icon, $category)
     {
         $pdo = DB::getPDO();
         $stmt = $pdo->prepare("
             UPDATE competences
-            SET title = ?, description = ?, icon = ?
+            SET title = ?, description = ?, icon = ?, category = ?
             WHERE id = ?
         ");
-        $stmt->execute([$title, $description, $icon, $id]);
+        $stmt->execute([$title, $description, $icon, $category, $id]);
     }
 
     public static function delete($id)

@@ -27,9 +27,11 @@ CREATE TABLE competences (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     icon VARCHAR(255),
+    category VARCHAR(50) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
+
 
 -- Table: contents
 CREATE TABLE contents (

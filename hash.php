@@ -18,3 +18,5 @@ INSERT INTO users (username, password) VALUES ('jules', '$2y$10$bF6pR1wi17CX/k/w
 
 
 
+ALTER TABLE competences
+ADD COLUMN category VARCHAR(50) NOT NULL AFTER icon;

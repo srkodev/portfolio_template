@@ -37,6 +37,24 @@ require __DIR__ . '/../includes/header.php';
           ><?= htmlspecialchars($competence['description'] ?? '') ?></textarea>
         </div>
         <div class="mb-4">
+          <label class="block font-semibold mb-1 text-gray-900 dark:text-white">Catégorie</label>
+          <select
+            name="category"
+            class="w-full border border-gray-300 dark:border-gray-600 p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            required
+          >
+            <option value="">Sélectionnez une catégorie</option>
+            <option value="Front end" <?= (isset($competence['category']) && $competence['category'] === "Front end") ? 'selected' : '' ?>>Front end</option>
+            <option value="Back end" <?= (isset($competence['category']) && $competence['category'] === "Back end") ? 'selected' : '' ?>>Back end</option>
+            <option value="CMS" <?= (isset($competence['category']) && $competence['category'] === "CMS") ? 'selected' : '' ?>>CMS</option>
+            <option value="Frameworks" <?= (isset($competence['category']) && $competence['category'] === "Frameworks") ? 'selected' : '' ?>>Frameworks</option>
+            <option value="outils" <?= (isset($competence['category']) && $competence['category'] === "outils") ? 'selected' : '' ?>>Outils</option>
+            <option value="base de données" <?= (isset($competence['category']) && $competence['category'] === "base de données") ? 'selected' : '' ?>>Base de données</option>
+            <option value="design" <?= (isset($competence['category']) && $competence['category'] === "design") ? 'selected' : '' ?>>Design</option>
+            <option value="dev ops" <?= (isset($competence['category']) && $competence['category'] === "dev ops") ? 'selected' : '' ?>>Dev Ops</option>
+          </select>
+        </div>
+        <div class="mb-4">
           <label class="block font-semibold mb-2 text-gray-900 dark:text-white">Icône (SVG uniquement)</label>
           <!-- Drag and Drop Container -->
           <div

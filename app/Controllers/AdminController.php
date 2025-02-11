@@ -245,12 +245,13 @@ class AdminController
         if ($editing) {
             $competence = Competence::find($id);
         } else {
-            $competence = ['id' => null, 'title' => '', 'description' => '', 'icon' => ''];
+            $competence = ['id' => null, 'title' => '', 'description' => '', 'icon' => '', 'category' => ''];
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $title = $_POST['title'] ?? '';
             $description = $_POST['description'] ?? '';
+            $category = $_POST['category'] ?? '';
             $iconPath = $competence['icon'];
 
             if (!empty($_FILES['iconFile']['name'])) {
@@ -258,10 +259,10 @@ class AdminController
             }
 
             if ($editing) {
-                Competence::update($id, $title, $description, $iconPath);
+                Competence::update($id, $title, $description, $iconPath, $category);
                 $message = "Compétence mise à jour avec succès.";
             } else {
-                Competence::create($title, $description, $iconPath);
+                Competence::create($title, $description, $iconPath, $category);
                 $message = "Compétence créée avec succès.";
             }
         }

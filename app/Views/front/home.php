@@ -119,19 +119,29 @@ require __DIR__ . '/../includes/header.php';
   </div>
 </section>
 
-<!-- SECTION COMPÉTENCES -->
+<!-- SECTION COMPÉTENCES (affichage en colonnes) -->
 <section id="skills" class="container mx-auto px-4 py-16" data-aos="fade-right">
   <h2 class="text-4xl font-bold mb-12 text-center">Compétences</h2>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-    <?php foreach ($competences as $comp): ?>
-      <span class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm py-2 px-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
-        <div class="flex items-center space-x-4">
-          <!-- Icône / SVG -->
-          <img src="<?= htmlspecialchars($comp['icon']) ?>" alt="<?= htmlspecialchars($comp['title']) ?>" class="h-6 w-6">
-          <!-- Nom de la compétence -->
-          <span><?= htmlspecialchars($comp['title']) ?></span>
-        </div>
-      </span>
+  <?php
+    // Regrouper les compétences par catégorie
+    $groupedCompetences = [];
+    foreach ($competences as $comp) {
+      $groupedCompetences[$comp['category']][] = $comp;
+    }
+  ?>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    <?php foreach ($groupedCompetences as $category => $comps): ?>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4 border-b pb-2"><?= htmlspecialchars($category) ?></h3>
+        <ul class="space-y-3">
+          <?php foreach ($comps as $comp): ?>
+            <li class="flex items-center space-x-2">
+              <img src="<?= htmlspecialchars($comp['icon']) ?>" alt="<?= htmlspecialchars($comp['title']) ?>" class="h-6 w-6">
+              <span class="text-sm text-gray-700 dark:text-gray-300"><?= htmlspecialchars($comp['title']) ?></span>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
     <?php endforeach; ?>
   </div>
 </section>
