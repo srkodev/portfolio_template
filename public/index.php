@@ -8,6 +8,7 @@ require_once __DIR__ . '/../app/Models/Content.php';
 require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Competence.php';
 require_once __DIR__ . '/../app/Models/ProjectGallery.php';
+require_once __DIR__ . '/../app/Models/ProjectCompetence.php';
 
 require_once __DIR__ . '/../app/Controllers/FrontController.php';
 require_once __DIR__ . '/../app/Controllers/AdminController.php';

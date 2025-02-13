@@ -6,7 +6,7 @@
   <title>Portfolio - Jules Crevoisier, Développeur Web</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&display=swap" rel="stylesheet" />
- <!-- Captcha cloudflare -->
+  <!-- Captcha cloudflare -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -71,16 +71,16 @@
       </div>
       
       <!-- Navigation + Switch, à droite -->
-      <div class="ml-auto flex items-center space-x-36">
+      <div class="ml-auto flex items-center space-x-4 md:space-x-36">
         <nav class="hidden md:flex space-x-8">
           <a href="index.php?action=home#present" class="header-nav-item">Accueil</a>
           <a href="index.php?action=home#projects" class="header-nav-item">Projets</a>
           <a href="index.php?action=home#skills" class="header-nav-item">Compétences</a>
           <a href="index.php?action=home#contact" class="header-nav-item">Contact</a>
         </nav>
-        <!-- Bouton switch Light/Dark rond -->
+        <!-- Bouton switch Light/Dark rond, responsive -->
         <button id="theme-toggle"
-                class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 
+                class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full border border-gray-300 
                        bg-gray-100 text-gray-700 hover:bg-gray-200 
                        dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 
                        transition focus:outline-none">

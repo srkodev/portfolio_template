@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\Competence;
 use App\Models\ProjectGallery;
+use App\Models\ProjectCompetence;
 
 class AdminController
 {
@@ -49,7 +50,6 @@ class AdminController
         if (!$contentKey) {
             die("Clé de contenu manquante.");
         }
-        // Debug : Affichage de la clé de contenu utilisée
         error_log("EditContent called with contentKey: " . $contentKey);
 
         // Récupérer le contenu existant depuis la BDD
@@ -58,13 +58,11 @@ class AdminController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newText = $_POST['content_text'] ?? '';
-            $imagePath = $currentContent['image']; // Conserver l'image existante par défaut
+            $imagePath = $currentContent['image'];
 
-            // Debug : Affichage des données POST et FILES
             error_log("POST data: " . print_r($_POST, true));
             error_log("FILES data: " . print_r($_FILES, true));
 
-            // Gestion de l'upload d'image
             if (!empty($_FILES['content_image']['name'])) {
                 $uploadResult = $this->handleFileUpload($_FILES['content_image']);
                 if ($uploadResult) {
@@ -75,7 +73,6 @@ class AdminController
                 }
             }
 
-            // Mettre à jour le contenu dans la base de données avec gestion des exceptions
             try {
                 Content::updateText($contentKey, $newText, $imagePath);
                 error_log("Content updated successfully for key: " . $contentKey);
@@ -88,7 +85,6 @@ class AdminController
             exit;
         }
 
-        // Charger la vue avec les données existantes
         require __DIR__ . '/../Views/admin/content_form.php';
     }
 
@@ -108,39 +104,44 @@ class AdminController
         $editing = !empty($id);
         $message = '';
 
+        // Récupérer toutes les compétences
+        $allCompetences = Competence::all();
+
         if ($editing) {
             $project = Project::find($id);
             $gallery = ProjectGallery::allByProject($id);
+            // Récupérer les IDs des compétences assignées au projet
+            $projectCompetences = ProjectCompetence::getCompetenceIdsByProject($id);
         } else {
             $project = [
                 'id' => null,
                 'title' => '',
                 'subtitle' => '',
                 'description' => '',
-                'techno' => '',
+                'techno' => '', // Ce champ n'est plus utilisé pour les compétences
                 'presentation' => '',
                 'image' => '',
-                'link' => '' // Nouveau champ
+                'link' => ''
             ];
             $gallery = [];
+            $projectCompetences = [];
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $title = $_POST['title'] ?? '';
             $subtitle = $_POST['subtitle'] ?? '';
             $description = $_POST['description'] ?? '';
-            $techno = $_POST['techno'] ?? '';
+            // On ignore le champ 'techno' puisque les compétences sont gérées via la table pivot
+            $techno = '';
             $presentation = $_POST['presentation'] ?? '';
-            $link = $_POST['link'] ?? ''; // Récupération du champ Lien
+            $link = $_POST['link'] ?? '';
 
             $imagePath = $project['image'];
 
-            // Gestion de l'image principale
             if (!empty($_FILES['image']['name'])) {
                 $imagePath = $this->handleFileUpload($_FILES['image']);
             }
 
-            // Mise à jour ou création du projet
             if ($editing) {
                 Project::update($id, $title, $subtitle, $description, $techno, $presentation, $imagePath, $link);
                 $message = "Projet mis à jour avec succès.";
@@ -149,13 +150,13 @@ class AdminController
                 $message = "Projet créé avec succès.";
             }
 
-            // Gestion des suppressions d'images
+            // Suppression d'images
             if (!empty($_POST['delete_images'])) {
                 $deletedImages = json_decode($_POST['delete_images'], true);
                 if (is_array($deletedImages)) {
                     foreach ($deletedImages as $imageId) {
                         $image = ProjectGallery::find($imageId);
-                        if ($image && $image['project_id'] == $id) { // Vérification de sécurité
+                        if ($image && $image['project_id'] == $id) {
                             $filePath = __DIR__ . '/../../public/' . $image['src'];
                             if (file_exists($filePath)) {
                                 unlink($filePath);
@@ -166,14 +167,23 @@ class AdminController
                 }
             }
 
-            // Gestion des nouvelles images
+            // Nouvelles images de la galerie
             if (!empty($_FILES['gallery_images']['name'][0])) {
                 $this->handleGalleryUpload($id, $_FILES['gallery_images']);
             }
 
+            // Synchronisation des compétences assignées via le modèle dédié
+            // On décode ici la chaîne JSON envoyée depuis le champ caché
+            $selectedCompetences = isset($_POST['competences']) ? json_decode($_POST['competences'], true) : [];
+            if (!is_array($selectedCompetences)) {
+                $selectedCompetences = [];
+            }
+            ProjectCompetence::sync($id, $selectedCompetences);
+
             // Recharger les données après modification
             $project = Project::find($id);
             $gallery = ProjectGallery::allByProject($id);
+            $projectCompetences = ProjectCompetence::getCompetenceIdsByProject($id);
         }
 
         require __DIR__ . '/../Views/admin/project_form.php';
@@ -181,10 +191,7 @@ class AdminController
 
     private function syncGallery($projectId, $existingGallery)
     {
-        // Récupérer toutes les images actuelles pour ce projet
         $currentGallery = ProjectGallery::allByProject($projectId);
-
-        // Supprimer les images qui ne sont pas dans la liste des IDs existants
         foreach ($currentGallery as $image) {
             if (!in_array($image['id'], $existingGallery)) {
                 $filePath = __DIR__ . '/../../public/' . $image['src'];
@@ -230,7 +237,7 @@ class AdminController
     public function competencesList()
     {
         $this->checkAdmin();
-        $competences = Competence::all();
+        $allCompetences = Competence::all();
         require __DIR__ . '/../Views/admin/competences_list.php';
     }
 
@@ -292,10 +299,7 @@ class AdminController
     private function handleFileUpload($file, $allowedMimeType = null)
     {
         $targetDir = 'uploads/';
-
-        // Nettoyer le nom du fichier pour éviter les caractères problématiques
         $fileName = $this->cleanFileName(basename($file['name']));
-
         $uniqueName = uniqid() . '_' . $fileName;
         $targetFile = $targetDir . $uniqueName;
 
@@ -313,11 +317,8 @@ class AdminController
 
     private function cleanFileName($filename)
     {
-        // Remplace les caractères non valides par des underscores
         $filename = preg_replace('/[^A-Za-z0-9\.-]/', '_', $filename);
-        // Remplace les underscores multiples par un seul
         $filename = preg_replace('/_+/', '_', $filename);
-        // Supprime les underscores en début ou en fin de chaîne
         $filename = trim($filename, '_');
         return $filename;
     }
@@ -327,7 +328,6 @@ class AdminController
         $uploadDir = 'uploads/gallery/';
         $baseDir = __DIR__ . '/../../public/' . $uploadDir;
 
-        // Créer le répertoire s'il n'existe pas
         if (!file_exists($baseDir)) {
             mkdir($baseDir, 0777, true);
         }
@@ -337,15 +337,12 @@ class AdminController
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
                 $tmpName = $files['tmp_name'][$i];
                 $originalName = $files['name'][$i];
-
-                // Nettoyer le nom du fichier
                 $cleanFileName = $this->cleanFileName($originalName);
                 $uniqueName = uniqid() . '_' . $cleanFileName;
                 $filePath = $uploadDir . $uniqueName;
                 $fullPath = $baseDir . $uniqueName;
 
                 if (move_uploaded_file($tmpName, $fullPath)) {
-                    // Créer l'entrée dans la base de données
                     $alt = pathinfo($originalName, PATHINFO_FILENAME);
                     ProjectGallery::create($projectId, $filePath, $alt);
                 }
@@ -353,4 +350,3 @@ class AdminController
         }
     }
 }
-?>

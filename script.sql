@@ -67,6 +67,16 @@ CREATE TABLE projects (
     PRIMARY KEY (id)
 );
 
+-- Table: project_competences (relation many-to-many)
+CREATE TABLE project_competences (
+    project_id INT(11) NOT NULL,
+    competence_id INT(11) NOT NULL,
+    PRIMARY KEY (project_id, competence_id),
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (competence_id) REFERENCES competences(id) ON DELETE CASCADE
+);
+
+
 -- Table: users
 CREATE TABLE users (
     id INT(11) NOT NULL AUTO_INCREMENT,

@@ -45,7 +45,7 @@ require __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <!-- SECTION HERO DU PROJET (aucun bg forcé) -->
-<section class="container mx-auto px-4 py-16" data-aos="fade-up">
+<section class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-16" data-aos="fade-up">
   <div class="text-center">
     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">
       <?= htmlspecialchars($project['title'] ?? 'Détail du Projet') ?>
@@ -57,16 +57,16 @@ require __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- SECTION CONTENU DU PROJET (pas de bg explicite) -->
-<section class="container mx-auto px-4 py-8" data-aos="fade-up">
+<section class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-8" data-aos="fade-up">
   <?php if (!empty($project['link'])): ?>
-    <div class="flex justify-start mb-6 ">
-    <a href="<?= htmlspecialchars($project['link']) ?>" target="_blank" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Lien vers le projet">
-      <!-- Icône de lien avec changement de couleur selon le thème -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-black dark:text-white">
-        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-      </svg>
-    </a>
+    <div class="flex justify-start mb-6">
+      <a href="<?= htmlspecialchars($project['link']) ?>" target="_blank" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Lien vers le projet">
+        <!-- Icône de lien avec changement de couleur selon le thème -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-black dark:text-white">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+      </a>
     </div>
   <?php endif; ?>
 
@@ -98,13 +98,26 @@ require __DIR__ . '/../includes/header.php';
     </div>
   <?php endif; ?>
 
-  <!-- Technologies & Méthodologie -->
+  <!-- Compétences utilisées (Technologies & Méthodologie) -->
   <h3 class="text-xl font-bold mt-10 mb-4">
     Technologies & Méthodologie
   </h3>
-  <p class="text-base sm:text-lg leading-relaxed">
-    <?= nl2br(htmlspecialchars($project['techno'] ?? 'Liste des technos, frameworks...')) ?>
-  </p>
+  <?php if (!empty($projectCompetences)): ?>
+    <div class="flex flex-wrap gap-4">
+      <?php foreach ($projectCompetences as $comp): ?>
+        <a href="index.php?action=home&competence=<?= $comp['id'] ?>"
+           title="Voir les projets avec cette compétence"
+           class="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 p-2 rounded">
+          <?php if (!empty($comp['icon'])): ?>
+            <img src="<?= htmlspecialchars($comp['icon']) ?>" alt="<?= htmlspecialchars($comp['title']) ?>" class="h-6 w-6">
+          <?php endif; ?>
+          <span class="text-gray-800 dark:text-gray-200"><?= htmlspecialchars($comp['title']) ?></span>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  <?php else: ?>
+    <p class="text-base sm:text-lg leading-relaxed">Aucune compétence assignée.</p>
+  <?php endif; ?>
 
   <!-- Bouton de retour -->
   <div class="mt-8">

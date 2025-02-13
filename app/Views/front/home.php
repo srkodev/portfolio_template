@@ -4,13 +4,13 @@ require __DIR__ . '/../includes/header.php';
 ?>
 
 <!-- SECTION HERO (À PROPOS) -->
-<section id="apropos" class="container mx-auto px-4 py-16 flex flex-col md:flex-row items-center gap-10" data-aos="fade-up">
+<section id="apropos" class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-16 flex flex-col md:flex-row items-center gap-10" data-aos="fade-up">
   <!-- Texte d'introduction -->
   <div class="md:w-1/2 space-y-6">
-    <h1 class="text-5xl md:text-7xl font-extrabold leading-tight">
+    <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight">
       Bonjour, je suis Jules Crevoisier.
     </h1>
-    <p class="text-xl md:text-2xl opacity-80">
+    <p class="text-lg sm:text-xl md:text-2xl opacity-80">
       <?= isset($aboutMe['text']) ? nl2br(htmlspecialchars($aboutMe['text'])) : "Développeur web passionné."; ?>
     </p>
     <div class="flex space-x-4">
@@ -80,19 +80,56 @@ require __DIR__ . '/../includes/header.php';
     <div class="relative mx-auto">
       <img src="<?= !empty($aboutMe['image']) ? htmlspecialchars($aboutMe['image']) : 'https://via.placeholder.com/500?text=Portrait'; ?>" 
            alt="Portrait Jules Crevoisier" 
-           class="w-[250px] h-[250px] rounded-full border-4 border-gray-200 dark:border-gray-600" />
+           class="w-40 h-40 sm:w-[250px] sm:h-[250px] rounded-full border-4 border-gray-200 dark:border-gray-600" />
       <!-- Cercles décoratifs statiques -->
       <div class="absolute inset-0 flex justify-center items-center pointer-events-none">
-        <div class="absolute w-[500px] h-[500px] md:w-80 md:h-80 border border-gray-300 dark:border-gray-500 rounded-full"></div>
-        <div class="absolute w-[550px] h-[550px] md:w-96 md:h-96 border border-gray-300 dark:border-gray-500 opacity-50 rounded-full"></div>
+        <div class="absolute w-40 h-40 sm:w-56 sm:h-56 md:w-80 md:h-80 border border-gray-300 dark:border-gray-500 rounded-full"></div>
+        <div class="absolute w-44 h-44 sm:w-64 sm:h-64 md:w-96 md:h-96 border border-gray-300 dark:border-gray-500 opacity-50 rounded-full"></div>
       </div>
     </div>
   </div>
 </section>
 
+
 <!-- SECTION PROJETS -->
-<section id="projects" class="container mx-auto px-4 py-16" data-aos="fade-up">
-  <h2 class="text-4xl font-bold mb-12 text-center">Mes Projets</h2>
+<section id="projects" class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-16" data-aos="fade-up">
+  <div class="mb-4">
+    <h2 class="text-4xl font-bold text-center md:text-left">Mes Projets</h2>
+  </div>
+  <!-- Dropdown placé sous le titre -->
+  <div class="relative inline-block mb-8">
+  <button id="dropdownButton" type="button" class="w-48 text-sm px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 rounded shadow hover:bg-gray-50 focus:outline-none text-gray-900 dark:text-gray-100" onclick="toggleDropdown()">
+    <?php if (isset($_GET['competence']) && !empty($_GET['competence'])): ?>
+      <?php
+        $selectedCompetenceTitle = "Filtrer par compétence";
+        foreach($competences as $comp) {
+          if($comp['id'] == $_GET['competence']) {
+            $selectedCompetenceTitle = $comp['title'];
+            break;
+          }
+        }
+        echo htmlspecialchars($selectedCompetenceTitle);
+      ?>
+    <?php else: ?>
+      Tous
+    <?php endif; ?>
+    <svg class="inline-block ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+  </button>
+  <div id="dropdownList" class="absolute z-10 hidden w-48 bg-white dark:bg-gray-800 border border-gray-300 rounded mt-1 max-h-60 overflow-auto">
+    <!-- Ajout de dark:bg-black pour le thème sombre -->
+    <input type="text" id="dropdownSearch" placeholder="Rechercher..." onkeyup="filterDropdown()" class="w-full text-sm px-4 py-2 border-b border-gray-300 focus:outline-none text-gray-900 dark:text-gray-100 dark:bg-black">
+    <a href="index.php?action=home" class="block text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Tous</a>
+    <?php foreach ($competences as $comp): ?>
+      <a href="index.php?action=home&competence=<?= $comp['id'] ?>" class="block text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <?= htmlspecialchars($comp['title']) ?>
+      </a>
+    <?php endforeach; ?>
+  </div>
+</div>
+
+  
   <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
     <?php foreach ($projects as $proj): ?>
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition p-4 flex flex-col border border-gray-200 dark:border-gray-700">
@@ -119,8 +156,8 @@ require __DIR__ . '/../includes/header.php';
   </div>
 </section>
 
-<!-- SECTION COMPÉTENCES (affichage en colonnes) -->
-<section id="skills" class="container mx-auto px-4 py-16" data-aos="fade-right">
+<!-- SECTION COMPÉTENCES -->
+<section id="skills" class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-16" data-aos="fade-right">
   <h2 class="text-4xl font-bold mb-12 text-center">Compétences</h2>
   <?php
     // Regrouper les compétences par catégorie
@@ -136,8 +173,12 @@ require __DIR__ . '/../includes/header.php';
         <ul class="space-y-3">
           <?php foreach ($comps as $comp): ?>
             <li class="flex items-center space-x-2">
-              <img src="<?= htmlspecialchars($comp['icon']) ?>" alt="<?= htmlspecialchars($comp['title']) ?>" class="h-6 w-6">
-              <span class="text-sm text-gray-700 dark:text-gray-300"><?= htmlspecialchars($comp['title']) ?></span>
+              <a href="index.php?action=home&competence=<?= $comp['id'] ?>"
+                 title="Voir les projets avec cette compétence"
+                 class="flex items-center space-x-2">
+                <img src="<?= htmlspecialchars($comp['icon']) ?>" alt="<?= htmlspecialchars($comp['title']) ?>" class="h-6 w-6">
+                <span class="text-sm text-gray-700 dark:text-gray-300"><?= htmlspecialchars($comp['title']) ?></span>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>
@@ -147,40 +188,32 @@ require __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- SECTION CONTACT -->
-<section id="contact" class="container mx-auto px-4 py-16" data-aos="fade-up">
+<section id="contact" class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-16" data-aos="fade-up">
   <h3 class="text-3xl font-bold mb-8 text-center">Me contacter</h3>
   
   <div class="flex flex-col md:flex-row items-center gap-8">
-    <!-- Formulaire de contact -->
     <div class="w-full md:w-1/2">
-      <!-- Remplacez l'action par la route gérant votre formulaire -->
       <form action="index.php?action=handle_contact_form" method="POST" class="space-y-4">
-        <!-- Affichage du message d'erreur si présent -->
         <?php if (!empty($error)): ?>
           <p class="text-red-600 text-center mb-4">
             <?= htmlspecialchars($error); ?>
           </p>
         <?php endif; ?>
-        <!-- Champ Nom (ou Nom / Entreprise) -->
         <div>
           <label for="nom" class="block mb-1">Nom ou entreprise</label>
           <input type="text" id="nom" name="nom" placeholder="Votre nom ou entreprise" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <!-- Champ Email -->
         <div>
           <label for="email" class="block mb-1">Email</label>
           <input type="email" id="email" name="email" placeholder="jules.crevoisier@example.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <!-- Champ Message -->
         <div>
           <label for="message" class="block mb-1">Message</label>
           <textarea id="message" name="message" rows="5" placeholder="Votre message ici..." required class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
         </div>
-        <!-- CAPTCHA Turnstile (ou reCAPTCHA, selon votre choix) -->
         <div class="flex justify-center">
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAA8N842mHAZW49A8"></div>
         </div>
-        <!-- Bouton d'envoi -->
         <div>
           <button type="submit" id="send" class="bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-600 transition w-full">
             Envoyer
@@ -189,25 +222,21 @@ require __DIR__ . '/../includes/header.php';
       </form>
     </div>
     
-    <!-- Séparateur entre le formulaire et les liens -->
     <div class="w-full md:w-auto">
       <div class="hidden md:block border-l border-gray-500 self-stretch"></div>
       <hr class="md:hidden border-t border-gray-500 w-full my-8">
     </div>
     
-    <!-- Liens de contact : disposition verticale (image au-dessus, texte et liens en dessous) -->
     <div class="w-full md:w-1/2 flex flex-col items-center">
       <img src="uploads/site/ppn.png" alt="Contact Image" class="w-[400px] h-[400px] rounded-full object-cover" />
       <div class="mt-4 text-center">
         <p class="mb-4 text-lg font-semibold">Vous pouvez aussi me retrouver ici</p>
         <div class="flex items-center justify-center space-x-4">
-          <!-- Email -->
           <a href="mailto:crevoisier.ju@gmail.com" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Email">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M2.01 6.465c0-.55.447-1 .997-1h18.006c.55 0 .997.45.997 1v11.07c0 .55-.447 1-.997 1H3.008a1 1 0 01-.997-1V6.465zM12 12.995l9.007-5.53H2.993L12 12.995z" />
             </svg>
           </a>
-          <!-- GitHub -->
           <a href="https://github.com/srkodev" target="_blank" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="GitHub">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 496 512">
               <path d="M165.9 397.4c0 2-2.3 3.7-5.2 3.7-2.9 0-5.2-1.7-5.2-3.7 
@@ -271,49 +300,30 @@ require __DIR__ . '/../includes/header.php';
   </div>
 </section>
 
-<!-- Modal pour Discord et confirmation d'envoi d'email avec style Glassmorphism -->
-<div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-  <div class="bg-white/30 dark:bg-gray-800/30 backdrop-blur-lg border border-white/40 rounded-lg p-6 max-w-sm w-full relative shadow-lg">
-    <button id="modalClose" class="absolute top-2 right-2 text-gray-600 dark:text-gray-300 text-2xl">&times;</button>
-    <p id="modalMessage" class="text-center text-white"></p>
-  </div>
-</div>
-
+<!-- SCRIPT POUR LE DROPDOWN -->
 <script>
-  // Lors du clic sur le bouton Discord
-  document.getElementById('discordButton').addEventListener('click', function() {
-    const discordUsername = 'srko_gg';
-    navigator.clipboard.writeText(discordUsername).then(function() {
-      showModal("Nom d'utilisateur copié, ajoute-moi sur Discord");
-    }, function(err) {
-      console.error('Erreur lors de la copie: ', err);
-    });
-  });
+function toggleDropdown() {
+  document.getElementById('dropdownList').classList.toggle('hidden');
+}
 
-  // Fonction d'affichage du modal avec un message
-  function showModal(message) {
-    document.getElementById('modalMessage').textContent = message;
-    document.getElementById('modal').classList.remove('hidden');
+function filterDropdown() {
+  var input = document.getElementById("dropdownSearch");
+  var filter = input.value.toUpperCase();
+  var div = document.getElementById("dropdownList");
+  var a = div.getElementsByTagName("a");
+  for (var i = 0; i < a.length; i++) {
+    var txtValue = a[i].textContent || a[i].innerText;
+    a[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
   }
+}
 
-  // Fermeture du modal au clic sur le bouton de fermeture
-  document.getElementById('modalClose').addEventListener('click', function() {
-    document.getElementById('modal').classList.add('hidden');
-  });
-
-  // Fermeture du modal en cliquant à l'extérieur du contenu
-  document.getElementById('modal').addEventListener('click', function(e) {
-    if(e.target === this) {
-      document.getElementById('modal').classList.add('hidden');
-    }
-  });
-
-  // Si un message de succès est défini (après envoi du formulaire), on affiche le modal
-  <?php if (!empty($success)): ?>
-    document.addEventListener('DOMContentLoaded', function() {
-      showModal("<?= htmlspecialchars($success, ENT_QUOTES) ?>");
-    });
-  <?php endif; ?>
+document.addEventListener('click', function(event) {
+  var dropdownButton = document.getElementById('dropdownButton');
+  var dropdownList = document.getElementById('dropdownList');
+  if (!dropdownButton.contains(event.target) && !dropdownList.contains(event.target)) {
+    dropdownList.classList.add('hidden');
+  }
+});
 </script>
 
 <?php

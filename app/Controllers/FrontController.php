@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\Project;
 use App\Models\Content;
 use App\Models\Competence;
+use App\Models\ProjectCompetence;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -13,7 +14,24 @@ class FrontController
     {
         $aboutMe = Content::getText('about_me');
         $competences = Competence::all();
-        $projects = Project::all();
+
+        // Vérifier si un paramètre de filtrage par compétence est présent
+        if (isset($_GET['competence']) && !empty($_GET['competence'])) {
+            $competenceId = $_GET['competence'];
+            // Récupérer les IDs des projets liés à la compétence via le modèle ProjectCompetence
+            $projectIds = ProjectCompetence::getProjectIdsByCompetence($competenceId);
+            if (!empty($projectIds)) {
+                // Récupérer tous les projets et ne garder que ceux dont l'id est dans $projectIds
+                $allProjects = Project::all();
+                $projects = array_filter($allProjects, function($proj) use ($projectIds) {
+                    return in_array($proj['id'], $projectIds);
+                });
+            } else {
+                $projects = []; // Aucun projet pour cette compétence
+            }
+        } else {
+            $projects = Project::all();
+        }
 
         require __DIR__ . '/../Views/front/home.php';
     }
@@ -27,6 +45,8 @@ class FrontController
         if (!$project) {
             die("Projet introuvable");
         }
+        // Récupérer les compétences assignées à ce projet via le modèle dédié
+        $projectCompetences = ProjectCompetence::getCompetencesByProject($id);
 
         require __DIR__ . '/../Views/front/project_detail.php';
     }
