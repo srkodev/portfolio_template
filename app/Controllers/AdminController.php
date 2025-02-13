@@ -323,6 +323,9 @@ class AdminController
         $targetFile = $targetDir . $uniqueName;
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if (!$finfo) {
+            throw new \Exception("finfo_open() a échoué.");
+        }
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
 
@@ -354,7 +357,7 @@ class AdminController
         $fileCount = count($files['name']);
         for ($i = 0; $i < $fileCount; $i++) {
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
-                // On peut ajouter ici une vérification supplémentaire de la taille, si besoin
+                // Vérification de la taille déjà effectuée côté contrôleur
                 $tmpName = $files['tmp_name'][$i];
                 $originalName = $files['name'][$i];
                 $cleanFileName = $this->cleanFileName($originalName);
