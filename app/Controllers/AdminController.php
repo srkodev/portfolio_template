@@ -128,6 +128,25 @@ class AdminController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // --- Sécurité : Vérification de la taille des fichiers ---
+            // Vérifier l'image principale
+            if (!empty($_FILES['image']['name']) && $_FILES['image']['size'] > 8388608) {
+                $message = "L'image principale dépasse la taille maximale autorisée de 8MB.";
+                require __DIR__ . '/../Views/admin/project_form.php';
+                exit;
+            }
+            // Vérifier chaque image de la galerie
+            if (!empty($_FILES['gallery_images']['name'][0])) {
+                foreach ($_FILES['gallery_images']['size'] as $size) {
+                    if ($size > 8388608) {
+                        $message = "Une des images de la galerie dépasse la taille maximale autorisée de 8MB.";
+                        require __DIR__ . '/../Views/admin/project_form.php';
+                        exit;
+                    }
+                }
+            }
+            // --- Fin vérifications ---
+
             $title = $_POST['title'] ?? '';
             $subtitle = $_POST['subtitle'] ?? '';
             $description = $_POST['description'] ?? '';
@@ -335,6 +354,7 @@ class AdminController
         $fileCount = count($files['name']);
         for ($i = 0; $i < $fileCount; $i++) {
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
+                // On peut ajouter ici une vérification supplémentaire de la taille, si besoin
                 $tmpName = $files['tmp_name'][$i];
                 $originalName = $files['name'][$i];
                 $cleanFileName = $this->cleanFileName($originalName);

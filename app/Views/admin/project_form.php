@@ -185,9 +185,13 @@ let selectedCompetences = JSON.parse(document.getElementById('competences-input'
 const maxFileSize = 5 * 1024 * 1024; // 5MB
 const maxFiles = 10;
 
-// Prévisualisation de l'image principale
+// Vérification de la taille de l'image principale (8MB maximum)
 document.getElementById('image').addEventListener('change', function(e) {
-  // Code inchangé pour la prévisualisation de l'image principale (non fourni ici)
+  const file = this.files[0];
+  if (file && file.size > 8388608) {
+    alert("L'image principale dépasse la taille maximale autorisée de 8MB.");
+    this.value = "";
+  }
 });
 
 // Fonction de suppression d'image
