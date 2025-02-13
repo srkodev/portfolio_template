@@ -112,6 +112,7 @@ class AdminController
             $gallery = ProjectGallery::allByProject($id);
             // Récupérer les IDs des compétences assignées au projet
             $projectCompetences = ProjectCompetence::getCompetenceIdsByProject($id);
+            error_log("getCompetenceIdsByProject for project $id: " . print_r($projectCompetences, true));
         } else {
             $project = [
                 'id' => null,
@@ -158,7 +159,10 @@ class AdminController
             $imagePath = $project['image'];
 
             if (!empty($_FILES['image']['name'])) {
-                $imagePath = $this->handleFileUpload($_FILES['image']);
+                $uploadResult = $this->handleFileUpload($_FILES['image']);
+                if ($uploadResult) {
+                    $imagePath = $uploadResult;
+                }
             }
 
             if ($editing) {
@@ -192,17 +196,22 @@ class AdminController
             }
 
             // Synchronisation des compétences assignées via le modèle dédié
-            // On décode ici la chaîne JSON envoyée depuis le champ caché
             $selectedCompetences = isset($_POST['competences']) ? json_decode($_POST['competences'], true) : [];
             if (!is_array($selectedCompetences)) {
                 $selectedCompetences = [];
             }
+            error_log("ProjectCompetence::sync called with projectId: $id and competenceIds: " . print_r($selectedCompetences, true));
             ProjectCompetence::sync($id, $selectedCompetences);
+            error_log("Suppression réussie des compétences existantes pour le projet $id");
+            if (empty($selectedCompetences)) {
+                error_log("Aucune compétence à insérer pour le projet $id.");
+            }
 
             // Recharger les données après modification
             $project = Project::find($id);
             $gallery = ProjectGallery::allByProject($id);
             $projectCompetences = ProjectCompetence::getCompetenceIdsByProject($id);
+            error_log("getCompetenceIdsByProject for project $id: " . print_r($projectCompetences, true));
         }
 
         require __DIR__ . '/../Views/admin/project_form.php';
@@ -281,7 +290,10 @@ class AdminController
             $iconPath = $competence['icon'];
 
             if (!empty($_FILES['iconFile']['name'])) {
-                $iconPath = $this->handleFileUpload($_FILES['iconFile'], 'image/svg+xml');
+                $uploadResult = $this->handleFileUpload($_FILES['iconFile'], 'image/svg+xml');
+                if ($uploadResult) {
+                    $iconPath = $uploadResult;
+                }
             }
 
             if ($editing) {
@@ -315,26 +327,75 @@ class AdminController
         }
     }
 
+    /**
+     * Upload file avec gestion détaillée des erreurs.
+     */
     private function handleFileUpload($file, $allowedMimeType = null)
     {
+        // Gestion des erreurs d'upload
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errorMessage = $this->fileUploadErrorMessage($file['error']);
+            error_log("Erreur lors de l'upload ({$file['error']}: $errorMessage) pour le fichier " . $file['name']);
+            return null;
+        }
+
+        if (empty($file['tmp_name'])) {
+            error_log("handleFileUpload: 'tmp_name' est vide pour le fichier " . $file['name']);
+            return null;
+        }
+
         $targetDir = 'uploads/';
+        $destinationDir = __DIR__ . '/../../public/' . $targetDir;
+
+        // Créer le répertoire si nécessaire
+        if (!is_dir($destinationDir)) {
+            if (!mkdir($destinationDir, 0777, true)) {
+                error_log("Échec de la création du répertoire : " . $destinationDir);
+                return null;
+            }
+        }
+
         $fileName = $this->cleanFileName(basename($file['name']));
         $uniqueName = uniqid() . '_' . $fileName;
         $targetFile = $targetDir . $uniqueName;
 
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        if (!$finfo) {
-            throw new \Exception("finfo_open() a échoué.");
+        $mimeType = mime_content_type($file['tmp_name']);
+        if ($allowedMimeType && $mimeType !== $allowedMimeType) {
+            error_log("Type MIME non autorisé: " . $mimeType . " pour le fichier " . $file['name']);
+            return null;
         }
-        $mimeType = finfo_file($finfo, $file['tmp_name']);
-        finfo_close($finfo);
 
-        if (!$allowedMimeType || $mimeType === $allowedMimeType) {
-            if (move_uploaded_file($file['tmp_name'], __DIR__ . '/../../public/' . $targetFile)) {
-                return $targetFile;
-            }
+        if (move_uploaded_file($file['tmp_name'], $destinationDir . $uniqueName)) {
+            return $targetFile;
+        } else {
+            error_log("move_uploaded_file() a échoué pour le fichier " . $file['name']);
         }
         return null;
+    }
+
+    /**
+     * Retourne un message d'erreur lisible pour un code d'erreur d'upload.
+     */
+    private function fileUploadErrorMessage($errorCode)
+    {
+        switch ($errorCode) {
+            case UPLOAD_ERR_INI_SIZE:
+                return "Le fichier dépasse la taille maximale autorisée par le serveur.";
+            case UPLOAD_ERR_FORM_SIZE:
+                return "Le fichier dépasse la taille maximale autorisée par le formulaire.";
+            case UPLOAD_ERR_PARTIAL:
+                return "Le fichier a été partiellement téléchargé.";
+            case UPLOAD_ERR_NO_FILE:
+                return "Aucun fichier n'a été téléchargé.";
+            case UPLOAD_ERR_NO_TMP_DIR:
+                return "Le dossier temporaire est manquant.";
+            case UPLOAD_ERR_CANT_WRITE:
+                return "Échec de l'écriture du fichier sur le disque.";
+            case UPLOAD_ERR_EXTENSION:
+                return "Une extension PHP a arrêté l'envoi du fichier.";
+            default:
+                return "Erreur inconnue lors de l'upload.";
+        }
     }
 
     private function cleanFileName($filename)
@@ -350,14 +411,16 @@ class AdminController
         $uploadDir = 'uploads/gallery/';
         $baseDir = __DIR__ . '/../../public/' . $uploadDir;
 
-        if (!file_exists($baseDir)) {
-            mkdir($baseDir, 0777, true);
+        if (!is_dir($baseDir)) {
+            if (!mkdir($baseDir, 0777, true)) {
+                error_log("Échec de la création du répertoire galerie : " . $baseDir);
+                return;
+            }
         }
 
         $fileCount = count($files['name']);
         for ($i = 0; $i < $fileCount; $i++) {
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
-                // Vérification de la taille déjà effectuée côté contrôleur
                 $tmpName = $files['tmp_name'][$i];
                 $originalName = $files['name'][$i];
                 $cleanFileName = $this->cleanFileName($originalName);
@@ -368,7 +431,12 @@ class AdminController
                 if (move_uploaded_file($tmpName, $fullPath)) {
                     $alt = pathinfo($originalName, PATHINFO_FILENAME);
                     ProjectGallery::create($projectId, $filePath, $alt);
+                } else {
+                    error_log("move_uploaded_file() a échoué pour l'image de galerie " . $originalName);
                 }
+            } else {
+                $errorMessage = $this->fileUploadErrorMessage($files['error'][$i]);
+                error_log("Erreur d'upload ({$files['error'][$i]}: $errorMessage) pour le fichier " . $files['name'][$i]);
             }
         }
     }
