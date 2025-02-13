@@ -5,6 +5,7 @@ use App\Models\Project;
 use App\Models\Content;
 use App\Models\Competence;
 use App\Models\ProjectCompetence;
+use App\Models\ProjectGallery;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -45,6 +46,8 @@ class FrontController
         if (!$project) {
             die("Projet introuvable");
         }
+        // Récupérer la galerie d'images et l'ajouter au tableau du projet
+        $project['gallery'] = ProjectGallery::allByProject($id);
         // Récupérer les compétences assignées à ce projet via le modèle dédié
         $projectCompetences = ProjectCompetence::getCompetencesByProject($id);
 
@@ -121,7 +124,7 @@ class FrontController
 
     private function verifyCaptcha($captchaResponse)
     {
-        $secretKey = '0x4AAAAAAA8N83denFCtj5_kViMnzAro0oI'; // Remplacez par votre clé secrète
+        $secretKey = '0x4AAAAAAA8N83denFCtj5_kViMnzAro0o'; // Remplacez par votre clé secrète
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://challenges.cloudflare.com/turnstile/v0/siteverify");
         curl_setopt($ch, CURLOPT_POST, true);

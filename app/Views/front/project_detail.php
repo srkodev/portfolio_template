@@ -4,34 +4,10 @@ require __DIR__ . '/../includes/header.php';
 ?>
 
 <?php if (!empty($project['gallery'])): ?>
-  <!-- MODAL (Lightbox) : on peut éventuellement mettre un fond semi-transparent -->
-  <div id="myModal"
-       class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-80 z-50">
+  <!-- MODAL (Lightbox) : fond semi-transparent sur tout l'écran -->
+  <div id="myModal" class="fixed inset-0 hidden bg-black bg-opacity-80 z-50 flex items-center justify-center">
+    <!-- Conteneur central pour l'image et la légende -->
     <div class="relative max-w-3xl w-full mx-4">
-      <!-- Bouton de fermeture -->
-      <button
-        class="absolute top-4 right-4 text-white text-3xl font-bold focus:outline-none z-10"
-        onclick="closeModal()"
-        aria-label="Fermer le modal"
-      >
-        &times;
-      </button>
-      <!-- Bouton Précédent -->
-      <button
-        class="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-3xl font-bold focus:outline-none z-10"
-        onclick="prevImage()"
-        aria-label="Image précédente"
-      >
-        &#10094;
-      </button>
-      <!-- Bouton Suivant -->
-      <button
-        class="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-3xl font-bold focus:outline-none z-10"
-        onclick="nextImage()"
-        aria-label="Image suivante"
-      >
-        &#10095;
-      </button>
       <!-- Image agrandie -->
       <img
         id="imgModal"
@@ -41,6 +17,30 @@ require __DIR__ . '/../includes/header.php';
       <!-- Légende -->
       <p id="caption" class="mt-4 text-center text-white text-lg"></p>
     </div>
+    <!-- Bouton Précédent positionné vers le bord gauche de l'écran -->
+    <button
+      class="absolute left-0 top-1/2 transform -translate-y-1/2 ml-4 text-white text-3xl font-bold focus:outline-none z-10"
+      onclick="prevImage()"
+      aria-label="Image précédente"
+    >
+      &#10094;
+    </button>
+    <!-- Bouton Suivant positionné vers le bord droit de l'écran -->
+    <button
+      class="absolute right-0 top-1/2 transform -translate-y-1/2 mr-4 text-white text-3xl font-bold focus:outline-none z-10"
+      onclick="nextImage()"
+      aria-label="Image suivante"
+    >
+      &#10095;
+    </button>
+    <!-- Bouton de fermeture positionné dans le coin supérieur droit -->
+    <button
+      class="absolute top-4 right-4 text-white text-3xl font-bold focus:outline-none z-10"
+      onclick="closeModal()"
+      aria-label="Fermer le modal"
+    >
+      &times;
+    </button>
   </div>
 <?php endif; ?>
 
