@@ -28,7 +28,7 @@ require __DIR__ . '/../includes/header.php';
                    A8.36 8.36 0 0022.46 6z"/>
         </svg>
       </a>
-      <a href="#" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="LinkedIn">
+      <a href="https://www.linkedin.com/in/jules-crevoisier/" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="LinkedIn">
         <!-- Icône LinkedIn -->
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 448 512">
           <path d="M100.28 448H7.4V148.9h92.88zm-46.44-341C24.09 107 
@@ -269,7 +269,7 @@ require __DIR__ . '/../includes/header.php';
             </svg>
           </a>
           <!-- LinkedIn -->
-          <a href="#" target="_blank" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/in/jules-crevoisier/" target="_blank" class="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="LinkedIn">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 448 512">
               <path d="M100.28 448H7.4V148.9h92.88zm-46.44-341C24.09 107 0 82.91 0 53.72A53.72 53.72 0 1153.72 107 c0 29.19-24.09 53.28-53.72 53.28zM447.9 448H355.22V302.4 c0-34.69-12.44-58.38-43.51-58.38-23.75 0-37.86 15.95-44.14 31.37 -2.28 5.6-2.85 13.36-2.85 21.23V448H172.04s1.24-261.26 0-288.13h92.68v40.82a92 92 0 0184-45.9 c61.24 0 107.18 39.94 107.18 125.68V448z"/>
             </svg>
